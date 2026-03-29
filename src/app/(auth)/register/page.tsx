@@ -49,48 +49,50 @@ export default function RegisterPage() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Register</CardTitle>
-        <CardDescription className="text-center">
-          Buat akun baru untuk memesan tiket bioskop
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {error && (
-            <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-              {error}
+    <div className="flex min-h-screen w-full items-center justify-center p-4 bg-slate-50">
+      <Card className="w-full max-w-md mx-auto shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">Register</CardTitle>
+          <CardDescription className="text-center">
+            Buat akun baru untuk memesan tiket bioskop
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+                {error}
+              </div>
+            )}
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" placeholder="nama@email.com" type="email" {...register("email")} />
+              {errors.email && (
+                <p className="text-sm font-medium text-destructive">{errors.email.message}</p>
+              )}
             </div>
-          )}
-          
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" placeholder="nama@email.com" type="email" {...register("email")} />
-            {errors.email && (
-              <p className="text-sm font-medium text-destructive">{errors.email.message}</p>
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" placeholder="minimal 6 karakter" type="password" {...register("password")} />
-            {errors.password && (
-              <p className="text-sm font-medium text-destructive">{errors.password.message}</p>
-            )}
-          </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" placeholder="minimal 6 karakter" type="password" {...register("password")} />
+              {errors.password && (
+                <p className="text-sm font-medium text-destructive">{errors.password.message}</p>
+              )}
+            </div>
 
-          <Button type="submit" className="w-full mt-2" disabled={isPending}>
-            {isPending ? "Memproses..." : "Daftar"}
-          </Button>
-        </form>
-        <div className="mt-4 text-center text-sm">
-          Sudah punya akun?{" "}
-          <Link href="/login" className="text-primary hover:underline font-medium">
-            Login di sini
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
+            <Button type="submit" className="w-full mt-2" disabled={isPending}>
+              {isPending ? "Memproses..." : "Daftar"}
+            </Button>
+          </form>
+          <div className="mt-4 text-center text-sm">
+            Sudah punya akun?{" "}
+            <Link href="/login" className="text-primary hover:underline font-medium">
+              Login di sini
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
