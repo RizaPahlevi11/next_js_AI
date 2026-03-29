@@ -1,166 +1,99 @@
-# Feature Enhancement: Authentication UX (Public Homepage + Protected Features)
+# Feature: Admin Login & Authentication
 
-## 1. Context
-Fitur ini merupakan revisi dari sistem authentication sebelumnya pada "Next.js Cinema Booking System" dengan Clean Architecture.
+## 1. Context & Goal
+Kita perlu menambahkan fitur otentikasi khusus untuk role `ADMIN`. Admin tidak dapat melakukan registrasi mandiri (tidak ada halaman register admin di aplikasi publik). Proses otentikasi hanya dapat dilakukan melalui rute dan halaman khusus.
 
-Perubahan utama:
-- Aplikasi tidak lagi memaksa login di root (/)
-- Homepage (/) bersifat PUBLIC
-- Fitur tertentu tetap PROTECTED (butuh login)
-- homepage cukup tuliskan "ini homepage", sampai perintah saya selanjutnya
+- **Halaman Login Admin**: `/admin/login`
+- **Endpoint API Login Admin**: `POST /api/admin/login`
 
-Semua implementasi tetap WAJIB mengikuti layer:
-- Presentation
-- Application
-- Data Access
-- Infrastructure
+## 2. Aturan Bisnis (Business Rules)
+1. **Validasi Kredensial**: Sistem harus memvalidasi format form email dan password.
+2. **Pencarian User & Validasi Password**: Melakukan pengecekan ketersediaan user berdasarkan email di database (lewat *Repository*). Compare/bandingkan password yang di-submit dengan hash password di database.
+3. **Pengecekan Role (CRITICAL)**: Setelah email dan password dinyatakan cocok, sistem **WAJIB** mengecek tipe `role` dari akun tersebut.
+   - Jika role adalah `ADMIN` → Lanjutkan proses login.
+   - Jika role **bukan** `ADMIN` (misalnya `USER`) → Tolak akses dan kembalikan error otorisasi.
 
----
+## 3. API Contract
 
-## 2. Goal
-Mengubah sistem authentication menjadi lebih user-friendly dengan:
-- Public homepage
-- Proteksi fitur penting
-- Navigasi berbasis status login (navbar)
+**HTTP Method:**
+`POST`
 
----
+**Endpoint:**
+`/api/admin/login`
 
-## 3. Functional Requirements
+**Request Body:**
+```json
+{
+  "email": "admin@cinema.com",
+  "password": "admin123"
+}
+```
 
-### A. Public Access (user)
-user dapat mengakses:
-- `/` (homepage)
-- daftar film
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Login admin berhasil",
+  "data": {
+    "id": "string",
+    "email": "admin@cinema.com",
+    "role": "ADMIN"
+  }
+}
+```
 
-user TIDAK dapat mengakses:
-- detail film (opsional, bisa diproteksi)
-- booking kursi
-- halaman user lainnya
+**Response Error (401 - Invalid Credential):**
+```json
+{
+  "success": false,
+  "message": "Email atau password salah"
+}
+```
 
-Jika user mencoba akses fitur protected:
-→ redirect ke `/login`
-
----
-
-### B. Authentication Flow (Tetap Sama)
-- Register:
-  - email
-  - password (hashed)
-  - role: USER
-- Login:
-  - validasi + compare password
-  - redirect:
-    - USER → `/`
-    - ADMIN → `/admin`
-
----
-
-### C. Protected Routes
-Route berikut WAJIB login:
-- `/booking`
-- `/tickets`
-- `/movies/[id]` (opsional proteksi)
+**Response Error (403 - Not Admin):**
+```json
+{
+  "success": false,
+  "message": "Unauthorized: bukan admin"
+}
+```
 
 ---
 
-### D. Navbar Behavior (IMPORTANT)
+## 4. Tahapan Implementasi (Panduan untuk Developer / AI)
 
-Navbar harus bersifat dinamis:
+Untuk programmer junior atau model AI yang akan mengerjakan instruksi ini, WAJIB menjaga struktur bawaan **Clean Architecture** yang telah diterapkan. Berikut adalah panduan langkah demi langkah implementasinya:
 
-#### Jika user:
-- Tampilkan:
-  - Logo / Home
-  - Button "Login"
-  - Button "Register"
+### Tahap 1: Validasi Input (Validation Layer)
+1. Buka file `src/validations/auth.schema.ts`.
+2. Anda bisa memakai kembali skema `loginSchema` yang ada atau membuat skema yang baru jika dibutuhkan. Pastikan Zod memvalidasi tipe email dan minimal form password.
 
-#### Jika User Login:
-- Tampilkan:
-  - Nama / Email user
-  - Menu:
-    - My Tickets
-    - Logout
+### Tahap 2: Logika Aplikasi (Service & Repository Layer)
+1. Buka/buat repository: Pastikan `src/repositories/user.repository.ts` memiliki fungsi pencarian seperti `getUserByEmail(email: string)`.
+2. Buka file `src/services/auth.service.ts`.
+3. Ciptakan atau tambah sebuah fungsi khusus untuk flow login (misal: `adminLoginService(data)`).
+   - Di dalam fungsi ini, gunakan metode dari `repository` untuk mendapatkan user.
+   - Lakukan `bcrypt.compare` pada tahap ini. Bila gagal, *throw* error (dengan spesifikasi HTTP status 401).
+   - **Terapkan Guard Role**: Panggil pengecekan jika `user.role !== "ADMIN"`. Bila ini terjadi, lempar standar error otorisasi (status 403).
+   - Kembalikan objek data user dasar (id, email, role) jika semua verifikasi sukses.
 
+### Tahap 3: Endpoint Next.js (Interface / Presentation Layer)
+1. Buat direktori dan file baru sesuai struktur rute app router Next.js: `src/app/api/admin/login/route.ts`.
+2. Implementasikan fungsi `export async function POST(req: Request)`.
+3. Di dalam handler tersebut:
+   - Parsing JSON body request.
+   - Validasi body menggunakan schema Zod (Tahap 1).
+   - Panggil logic service (Tahap 2).
+   - Jika menggunakan `NextAuth`, Anda mungkin me-*redirect* logic otentikasi login ini ke standar penyusunan library auth, PASTIKAN standar contract form responsnya sesuai. Tetapi apabila endpoint dipisah benar-benar mandiri secara native, pastikan respons `NextResponse.json` kembaliannya tepat (200, 401, 403) sesuai API Contract di poin ke-3.
 
----
+### Tahap 4: Halaman Frontend Admin (UI Presentation)
+1. Buat halaman baru di lokasi `src/app/(admin)/admin/login/page.tsx` (sesuaikan letak agar tidak terpengaruh layout web utama secara tak disengaja).
+2. Bangun User Interface (UI) form Login (Inputs & Button) menggunakan package standar *shadcn/ui* (dari `src/components/ui/...`).
+3. Buat client-side *action* (bisa berupa form submission konvensional dengan fetch/axios atau perantara Next.js Server Action) yang meneruskan data ke rute `POST /api/admin/login`.
+4. Jika response tidak sukses atau 401/403, tangkap errornya dan tampilkan di UI form menggunakan Toast atau Alert/Label Notifikasi merah.
+5. Jika sukses (200), segera jalankan re-routing ke dashboard `/admin`.
 
-## 4. Technical Requirements
-
-### A. Middleware Update
-Ubah logic middleware:
-
-- TIDAK lagi redirect `/` ke login
-- Hanya protect route tertentu:
-
-Contoh:
-- protect:
-  - `/booking`
-  - `/tickets`
-  - `/admin`
-- allow:
-  - `/`
-  - `/login`
-  - `/register`
-
----
-
-### B. Session Handling
-Gunakan Auth.js:
-- Ambil session di server (Server Component)
-- Gunakan untuk menentukan UI navbar
-
----
-
-### C. UI Implementation (WAJIB SHADCN/UI)
-
-#### Navbar Component:
-
-Gunakan:
-- Button (shadcn)
-- DropdownMenu (untuk user menu)
-- Avatar (optional)
-
----
-
-### D. Homepage (`/`)
-- tampilkan list film (dummy/static dulu boleh)
-- tampilkan CTA:
-  - "Login untuk booking tiket"
-
----
-
-### E. Guarding UI (Client/Server)
-
-Pada halaman protected:
-- cek session
-- jika tidak ada → redirect `/login`
-
----
-
-## 5. Folder Addition
-
-Tambahkan:
-
-`src/components/shared/navbar.tsx`
-
----
-
-## 6. Output Format
-
-Berikan:
-
-1. Update middleware (logic baru)
-2. Navbar component (shadcn)
-3. Contoh penggunaan session di layout
-4. Contoh proteksi halaman booking
-5. Penjelasan flow:
-   - user vs admin
-
----
-
-## 7. Constraints
-
-- TypeScript wajib
-- Clean Architecture tetap dijaga
-- UI wajib shadcn/ui
-- Tidak boleh hardcode auth logic di UI
-- Harus scalable untuk fitur booking selanjutnya
+### Tahap 5: Keamanan Global (Middleware Layer)
+1. Buka file `src/middleware.ts`.
+2. Bila belum dikonfigurasi, pastikan semua path rute dan haluan `/admin/*` **WAJIB** dicek token/session-nya.
+3. Terutama, selain cek JWT, role dari decoded JWT token tersebut mutlak dibatasi untuk `"ADMIN"`. `USER` biasa yang mencoba masuk rute `/admin` patut di-redirect paksa kembali ke beranda `/`. Rute `/admin/login` dikecualikan dari status redirect log ini jika status *state* login belum diset oleh pengguna.

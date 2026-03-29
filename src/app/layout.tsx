@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import Navbar from "@/components/shared/navbar";
+import NavbarWrapper from "@/components/shared/navbar-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <QueryProvider>
           <AuthProvider>
-            <Navbar />
+            <NavbarWrapper>
+              <Navbar />
+            </NavbarWrapper>
             <main className="min-h-screen">
               {children}
             </main>

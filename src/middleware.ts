@@ -7,7 +7,7 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET })
   
   const pathname = req.nextUrl.pathname
-  const publicRoutes = ['/', '/login', '/register']
+  const publicRoutes = ['/', '/login', '/register', '/admin/login']
   const isPublicRoute = publicRoutes.includes(pathname)
 
   // Guest requesting protected route -> redirect to login
@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
-  const isAuthPage = pathname === '/login' || pathname === '/register'
+  const isAuthPage = pathname === '/login' || pathname === '/register' || pathname === '/admin/login'
 
   // Authenticated user requesting auth pages -> redirect to dashboard/home
   if (token && isAuthPage) {
@@ -26,8 +26,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/', req.url))
   }
 
-  // RBAC check for admin routes
-  if (pathname.startsWith('/admin') && token?.role !== 'ADMIN') {
+  // RBAC check for admin routes (kecuali halaman login admin itu sendiri)
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && token?.role !== 'ADMIN') {
     return NextResponse.redirect(new URL('/', req.url))
   }
 
