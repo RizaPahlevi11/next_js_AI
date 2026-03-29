@@ -7,12 +7,15 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET })
   
   const pathname = req.nextUrl.pathname
-  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register')
+  const publicRoutes = ['/', '/login', '/register']
+  const isPublicRoute = publicRoutes.includes(pathname)
 
   // Guest requesting protected route -> redirect to login
-  if (!token && !isAuthPage) {
+  if (!token && !isPublicRoute) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
+
+  const isAuthPage = pathname === '/login' || pathname === '/register'
 
   // Authenticated user requesting auth pages -> redirect to dashboard/home
   if (token && isAuthPage) {
