@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#359EFF", "background-light": "#f5f7f8", "background-dark": "#0f1923"}, fontFamily: {display: "Manrope"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .checkbox-custom {
+            --checkbox-tick-svg: url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(255,255,255)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z%27/%3e%3c/svg%3e');
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-100 min-h-screen">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Left Side: Aesthetic Image/Gradient -->
+<div class="hidden lg:flex lg:w-1/2 relative bg-primary items-center justify-center p-12">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Modern minimalist office space with plants and natural light" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCBYOrEfltgynQJexm3XwszzRbE7Y3ohPi56_YCHxXR7F4TvMxt8wiy4jmDF_gv4Q5D9_KXiGufMMwOXxdJmmmTigUDYeLs7CFboxGDZk6cc-_NdB4-XcVwWRyzxy86puS2oCqi39gJSmFVal1CuUi8GQMOhvn9k_TIl-bu6CJOf9UCT6zFK3eHoUDx78EB6idV0kg3qh9OGvdeO1qpc-lhIz3N4AClCql97653NJJgO6iYrag3nXFUVKOqNNLcBVM8oKIGK1lqD74');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-br from-primary/80 to-primary/40 mix-blend-multiply"></div>
+<div class="relative z-10 text-white max-w-md">
+<div class="flex items-center gap-2 mb-8">
+<div class="bg-white/20 p-2 rounded-lg backdrop-blur-md">
+<span class="material-symbols-outlined text-3xl">ArrowDown</span>
+</div>
+<span class="text-2xl font-bold tracking-tight">NexusFlow</span>
+</div>
+<h2 class="text-4xl font-extrabold leading-tight mb-4">Elevate your team's productivity.</h2>
+<p class="text-lg text-white/80">Experience the next generation of collaborative project management with our intuitive interface.</p>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 md:p-20 bg-background-light dark:bg-background-dark overflow-y-auto">
+<div class="w-full max-w-[440px] flex flex-col gap-8">
+<!-- Heading Section -->
+<div class="flex flex-col gap-2">
+<h1 class="text-[#0d141b] dark:text-white text-3xl font-black leading-tight tracking-[-0.033em]">Welcome back</h1>
+<p class="text-[#4c739a] dark:text-slate-400 text-base font-normal leading-normal">Please enter your details to sign in.</p>
+</div>
+<!-- Form Section -->
+<form class="flex flex-col gap-5">
+<!-- Email Field -->
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-semibold">Email Address</label>
+<input class="flex w-full rounded-lg text-[#0d141b] dark:text-white border border-[#cfdbe7] dark:border-slate-700 bg-white dark:bg-slate-800 h-12 px-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-[#4c739a]/60" placeholder="e.g. name@company.com" type="email"/>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-[#0d141b] dark:text-slate-200 text-sm font-semibold">Password</label>
+<input class="flex w-full rounded-lg text-[#0d141b] dark:text-white border border-[#cfdbe7] dark:border-slate-700 bg-white dark:bg-slate-800 h-12 px-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-[#4c739a]/60" placeholder="Enter your password" type="password"/>
+</div>
+<!-- Utilities: Remember Me & Forgot Password -->
+<div class="flex items-center justify-between py-1">
+<label class="flex items-center gap-x-2 cursor-pointer group checkbox-custom">
+<input class="h-5 w-5 rounded border-[#cfdbe7] dark:border-slate-700 border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 transition-colors" type="checkbox"/>
+<span class="text-[#0d141b] dark:text-slate-300 text-sm font-medium">Remember me</span>
+</label>
+<a class="text-primary hover:underline text-sm font-semibold" href="#">Forgot password?</a>
+</div>
+<!-- Sign In Button -->
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-lg shadow-sm transition-all transform active:scale-[0.98]" type="submit">
+                        Sign In
+                    </button>
+</form>
+<!-- Divider -->
+<div class="relative flex items-center gap-4 py-2">
+<div class="flex-grow border-t border-[#cfdbe7] dark:border-slate-700"></div>
+<span class="text-[#4c739a] dark:text-slate-500 text-xs font-bold uppercase tracking-wider">Or continue with</span>
+<div class="flex-grow border-t border-[#cfdbe7] dark:border-slate-700"></div>
+</div>
+<!-- Social Logins -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 h-12 px-4 rounded-lg border border-[#cfdbe7] dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+<img alt="Google Logo" class="w-5 h-5" data-alt="Google colorful logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl8XYa3jrnys6nIyGGf0k1vz-7o52tURXCQ_vDM9bbdcmswkNjPZ_bk3Ie0QvZsRnieEdCQGs4F8W5KX06GKU5BkjmK9HnBxtL1A-_RmyiFp7nOqQeuJRNYED7ynguNHu-oQJ4WXJWJL51I69e6tLDbq-wOyt8YIAq9Wpd5cO2mHtF-BiA1lLZiaqvMYnauNE0Aqrz_IBoBAQyIU6nIVmB82QwGvPdhJv1j02w7pwoPR_2K_xDc1GIULZ5SPZ8-DD0iUnrxHeXsvs"/>
+<span class="text-[#0d141b] dark:text-white text-sm font-semibold">Google</span>
+</button>
+<button class="flex items-center justify-center gap-3 h-12 px-4 rounded-lg border border-[#cfdbe7] dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+<span class="material-symbols-outlined text-xl text-[#0d141b] dark:text-white">File</span>
+<span class="text-[#0d141b] dark:text-white text-sm font-semibold">Apple</span>
+</button>
+</div>
+<!-- Footer Link -->
+<p class="text-center text-[#4c739a] dark:text-slate-400 text-sm font-medium mt-4">
+                    Don't have an account? 
+                    <a class="text-primary font-bold hover:underline ml-1" href="#">Sign up for free</a>
+</p>
+</div>
+<!-- Optional Help Link -->
+<div class="absolute bottom-8 flex gap-6">
+<a class="text-xs text-[#4c739a] dark:text-slate-500 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-xs text-[#4c739a] dark:text-slate-500 hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-xs text-[#4c739a] dark:text-slate-500 hover:text-primary transition-colors" href="#">Help Center</a>
+</div>
+</div>
+</div>
+</body></html>
